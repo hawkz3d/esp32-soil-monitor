@@ -1,0 +1,47 @@
+{
+  "version": 1,
+  "minor_version": 1,
+  "key": "lovelace",
+  "data": {
+    "config": {
+      "views": [
+        {
+          "title": "概览",
+          "icon": "mdi:home",
+          "cards": [
+            {
+              "type": "horizontal-stack",
+              "cards": [
+                {
+                  "type": "gauge",
+                  "entity": "sensor.esp32_soil_monitor_soil_moisture_1",
+                  "name": "盆 1"
+                },
+                {
+                  "type": "gauge",
+                  "entity": "sensor.esp32_soil_monitor_soil_moisture_2",
+                  "name": "盆 2"
+                },
+                {
+                  "type": "gauge",
+                  "entity": "sensor.esp32_soil_monitor_soil_moisture_3",
+                  "name": "盆 3"
+                },
+                {
+                  "type": "gauge",
+                  "entity": "sensor.esp32_soil_monitor_soil_moisture_4",
+                  "name": "盆 4"
+                },
+                {
+                  "type": "gauge",
+                  "entity": "sensor.esp32_soil_monitor_soil_moisture_5",
+                  "name": "盆 5"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
