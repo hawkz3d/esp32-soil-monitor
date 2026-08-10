@@ -9,10 +9,10 @@
 // ===== WiFi / MQTT 配置 =====
 const char* WIFI_SSID = "YOUR_WIFI_SSID";
 const char* WIFI_PASS = "YOUR_WIFI_PASSWORD";
-const char* MQTT_HOST = "192.168.0.XXX";      // NAS（broker）
+const char* MQTT_HOST = "192.168.X.XXX";      
 const int   MQTT_PORT = 1883;
 
-// ===== 传感器引脚（必须用 ADC1！ADC2 在 WiFi 开启时失效）=====
+// ===== 传感器引脚（ADC2 在 WiFi 开启时失效）=====
 // ADC1 可用：GPIO32, 33, 34, 35, 36(SVP), 39(SVN) 共 6 路
 const int PINS[5] = {32, 33, 34, 35, 36};
 const char* SENSOR_NAMES[5] = {"soil_1", "soil_2", "soil_3", "soil_4", "soil_5"};
