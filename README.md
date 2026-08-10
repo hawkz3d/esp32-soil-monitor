@@ -55,7 +55,5 @@ const char* MQTT_HOST = "192.168.0.XXX";   // NAS / MQTT broker 地址
 
 ## 踩坑记录
 
-- 传感器是 **AOUT 模拟输出**（555 振荡整流成直流电压），不是方波，用 `analogRead` 读电压
-- 面包板接触不良会压降，压缩 ADC 动态范围（干湿分不开）；供电要直连可靠
 - 探针泡水久会留水膜 → 读数停在湿态低值，**晾干恢复，非损坏**
 - `MQTT_MAX_PACKET_SIZE` 必须 ≥1024（discovery JSON 约 600B，默认 256 会导致 publish 失败）
