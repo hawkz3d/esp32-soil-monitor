@@ -1,0 +1,23 @@
+# Arduino build output
+build/
+build-*/
+*.o
+*.elf
+
+# IDE / editor
+.vscode/
+.idea/
+*.swp
+
+# Python
+__pycache__/
+*.pyc
+
+# Credentials / secrets
+*.pem
+*.key
+.env
+
+# OS
+Thumbs.db
+.DS_Store
