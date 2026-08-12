@@ -17,16 +17,16 @@ const int   MQTT_PORT = 1883;
 const int PINS[5] = {32, 33, 34, 35, 36};
 const char* SENSOR_NAMES[5] = {"soil_1", "soil_2", "soil_3", "soil_4", "soil_5"};
 
-// ===== 校准基准：{dry, wet}，每路独立 =====
+// ===== 校准基准：{dry, wet}，每路独立（5 路同型号，暂共用）=====
 // dry = 完全干燥时 ADC（高值，映射为房间空气湿度 AIR_HUMIDITY_PCT）
 // wet = 水饱和时 ADC（低值，映射为 100%）
-// S1 已实测：dry=3223（新探头完全干燥）、wet=1953（泡水）。
-const int CAL_DRY[5] = {3223, 3223, 3223, 3223, 3223};
-const int CAL_WET[5] = {1953, 1953, 1953, 1953, 1953};
+// 2026-08-12 实测：dry=3248（S1 晾干稳定）、wet=1034（S1 泡水稳定）
+const int CAL_DRY[5] = {3248, 3248, 3248, 3248, 3248};
+const int CAL_WET[5] = {1034, 1034, 1034, 1034, 1034};
 
 // 完全干燥时显示的房间空气湿度（%）：土壤完全干透时与空气水分平衡，
 // 读数不应为 0% 而应回到环境湿度
-const float AIR_HUMIDITY_PCT = 30.0f;
+const float AIR_HUMIDITY_PCT = 35.0f;
 
 const unsigned long REPORT_MS = 30000; // 上报间隔（毫秒）
 
