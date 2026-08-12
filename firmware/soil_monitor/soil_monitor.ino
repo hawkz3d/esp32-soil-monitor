@@ -18,10 +18,15 @@ const int PINS[5] = {32, 33, 34, 35, 36};
 const char* SENSOR_NAMES[5] = {"soil_1", "soil_2", "soil_3", "soil_4", "soil_5"};
 
 // ===== 校准基准：{dry, wet}，每路独立 =====
-// dry = 完全干燥时 ADC（高值）  wet = 水饱和时 ADC（低值）
+// dry = 完全干燥时 ADC（高值，映射为房间空气湿度 AIR_HUMIDITY_PCT）
+// wet = 水饱和时 ADC（低值，映射为 100%）
 // S1 已实测：dry=3223（新探头完全干燥）、wet=1953（泡水）。
 const int CAL_DRY[5] = {3223, 3223, 3223, 3223, 3223};
 const int CAL_WET[5] = {1953, 1953, 1953, 1953, 1953};
+
+// 完全干燥时显示的房间空气湿度（%）：土壤完全干透时与空气水分平衡，
+// 读数不应为 0% 而应回到环境湿度
+const float AIR_HUMIDITY_PCT = 30.0f;
 
 const unsigned long REPORT_MS = 30000; // 上报间隔（毫秒）
 
@@ -62,11 +67,11 @@ void send_discovery() {
   }
 }
 
-// 湿度百分比：0%（干）~100%（湿），线性映射
+// 湿度百分比：干燥(dry)时显示 AIR_HUMIDITY_PCT，水饱和(wet)时显示 100%，线性映射
 float moisture_percent(int idx, int adc) {
   int dry = CAL_DRY[idx], wet = CAL_WET[idx];
-  if (dry <= wet) return 50.0f;
-  float p = (float)(dry - adc) / (float)(dry - wet) * 100.0f;
+  if (dry <= wet) return AIR_HUMIDITY_PCT;
+  float p = AIR_HUMIDITY_PCT + (float)(dry - adc) / (float)(dry - wet) * (100.0f - AIR_HUMIDITY_PCT);
   if (p < 0) p = 0;
   if (p > 100) p = 100;
   return p;
