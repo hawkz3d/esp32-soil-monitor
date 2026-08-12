@@ -44,8 +44,9 @@ const char* MQTT_HOST = "192.168.0.XXX";   // NAS / MQTT broker 地址
 
 - `dry` = 完全干燥时的 ADC（高值）
 - `wet` = 水饱和时的 ADC（低值）
-- 湿度% = `AIR_HUMIDITY_PCT + (dry - adc) / (dry - wet) * (100 - AIR_HUMIDITY_PCT)`，干高湿低
-- 读数范围固定为 `[AIR_HUMIDITY_PCT, 100]`，不会再跌破环境湿度
+- 湿度% = `AIR_HUMIDITY_PCT + (dry - adc) / (dry - wet) * (100 - AIR_HUMIDITY_PCT) - HUMIDITY_OFFSET`，干高湿低
+- `HUMIDITY_OFFSET` = 经验偏移（默认 35），修正当前盆读数整体偏高
+- 读数下限固定为 `AIR_HUMIDITY_PCT`，不会再跌破环境湿度
 - `AIR_HUMIDITY_PCT` = 完全干燥时显示的房间空气湿度（默认 35%）——土壤干透后与空气水分平衡，读数回到环境湿度而非 0%
 
 2026-08-12 实测（5 路同型号暂共用）：`CAL_DRY=3248`（晾干稳定）、`CAL_WET=1034`（泡水稳定），动态范围 2214。
