@@ -45,6 +45,7 @@ const char* MQTT_HOST = "192.168.0.XXX";   // NAS / MQTT broker 地址
 - `dry` = 完全干燥时的 ADC（高值）
 - `wet` = 水饱和时的 ADC（低值）
 - 湿度% = `AIR_HUMIDITY_PCT + (dry - adc) / (dry - wet) * (100 - AIR_HUMIDITY_PCT)`，干高湿低
+- 读数范围固定为 `[AIR_HUMIDITY_PCT, 100]`，不会再跌破环境湿度
 - `AIR_HUMIDITY_PCT` = 完全干燥时显示的房间空气湿度（默认 30%）——土壤干透后与空气水分平衡，读数回到环境湿度而非 0%
 
 校准的"干燥基准"必须是**完全干燥**（擦干纸巾仍算湿，会残留水膜）。

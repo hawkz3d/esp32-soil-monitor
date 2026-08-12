@@ -72,7 +72,7 @@ float moisture_percent(int idx, int adc) {
   int dry = CAL_DRY[idx], wet = CAL_WET[idx];
   if (dry <= wet) return AIR_HUMIDITY_PCT;
   float p = AIR_HUMIDITY_PCT + (float)(dry - adc) / (float)(dry - wet) * (100.0f - AIR_HUMIDITY_PCT);
-  if (p < 0) p = 0;
+  if (p < AIR_HUMIDITY_PCT) p = AIR_HUMIDITY_PCT; // 下限=环境湿度，不再跌破
   if (p > 100) p = 100;
   return p;
 }
