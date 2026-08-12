@@ -17,16 +17,14 @@ const int   MQTT_PORT = 1883;
 const int PINS[5] = {32, 33, 34, 35, 36};
 const char* SENSOR_NAMES[5] = {"soil_1", "soil_2", "soil_3", "soil_4", "soil_5"};
 
-// ===== 校准基准：{dry, wet}，每路独立（5 路同型号，暂共用）=====
-// dry = 完全干燥时 ADC（高值，映射为房间空气湿度 AIR_HUMIDITY_PCT）
-// wet = 水饱和时 ADC（低值，映射为 100%）
-// 2026-08-12 实测：dry=3248（S1 晾干稳定）、wet=1034（S1 泡水稳定）
-const int CAL_DRY[5] = {3248, 3248, 3248, 3248, 3248};
-const int CAL_WET[5] = {1034, 1034, 1034, 1034, 1034};
+// ===== 逐路仪器校准（2026-08-12 用户仪器实测）=====
+// CAL_ADC = 各盆当前 ADC，CAL_HUM = 仪器实测湿度%
+// 盆1(S1)=1269/59 盆2(S2)=1192/69 盆3(S3)=1251/68 盆4(S4)=1150/61 盆5(S5)=1467/73
+const int CAL_ADC[5] = {1269, 1192, 1251, 1150, 1467};
+const int CAL_HUM[5] = {59, 69, 68, 61, 73};
 
-// 完全干燥时显示的房间空气湿度（%）：土壤完全干透时与空气水分平衡，
-// 读数不应为 0% 而应回到环境湿度
-const float AIR_HUMIDITY_PCT = 35.0f;
+const float CAL_WET_ADC = 1034.0f;   // 泡水基准（S1 泡水实测，近似通用），泡水映射到 100%
+const float AIR_HUMIDITY_PCT = 35.0f; // 干燥下限=房间空气湿度
 
 const unsigned long REPORT_MS = 30000; // 上报间隔（毫秒）
 
@@ -67,16 +65,12 @@ void send_discovery() {
   }
 }
 
-// 经验修正：目前盆读数普遍偏高约 35 个百分点，直接减去（经验常数，盆干后可再调）
-const float HUMIDITY_OFFSET = 35.0f;
-
-// 湿度百分比：干燥(dry)时显示 AIR_HUMIDITY_PCT，水饱和(wet)时显示 100%，线性映射后减经验偏移
+// 湿度映射：每路线性，锚点 = 当前实测点(CAL_ADC[idx], CAL_HUM[idx]) + 泡水(CAL_WET_ADC→100%)
+// 浇水 → ADC↓ → 湿度↑；变干 → ADC↑ → 湿度↓，降到 AIR_HUMIDITY_PCT 后 clamp
 float moisture_percent(int idx, int adc) {
-  int dry = CAL_DRY[idx], wet = CAL_WET[idx];
-  if (dry <= wet) return AIR_HUMIDITY_PCT;
-  float p = AIR_HUMIDITY_PCT + (float)(dry - adc) / (float)(dry - wet) * (100.0f - AIR_HUMIDITY_PCT);
-  p -= HUMIDITY_OFFSET;
-  if (p < AIR_HUMIDITY_PCT) p = AIR_HUMIDITY_PCT; // 下限=环境湿度，不再跌破
+  float slope = (100.0f - CAL_HUM[idx]) / (CAL_ADC[idx] - CAL_WET_ADC);
+  float p = CAL_HUM[idx] + (CAL_ADC[idx] - adc) * slope;
+  if (p < AIR_HUMIDITY_PCT) p = AIR_HUMIDITY_PCT;
   if (p > 100) p = 100;
   return p;
 }

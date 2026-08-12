@@ -40,18 +40,16 @@ const char* MQTT_HOST = "192.168.0.XXX";   // NAS / MQTT broker 地址
 
 ## 校准
 
-每路传感器独立校准，填 `CAL_DRY` / `CAL_WET`：
+每路独立仪器校准，填 `CAL_ADC` / `CAL_HUM`：
 
-- `dry` = 完全干燥时的 ADC（高值）
-- `wet` = 水饱和时的 ADC（低值）
-- 湿度% = `AIR_HUMIDITY_PCT + (dry - adc) / (dry - wet) * (100 - AIR_HUMIDITY_PCT) - HUMIDITY_OFFSET`，干高湿低
-- `HUMIDITY_OFFSET` = 经验偏移（默认 35），修正当前盆读数整体偏高
-- 读数下限固定为 `AIR_HUMIDITY_PCT`，不会再跌破环境湿度
-- `AIR_HUMIDITY_PCT` = 完全干燥时显示的房间空气湿度（默认 35%）——土壤干透后与空气水分平衡，读数回到环境湿度而非 0%
+- `CAL_ADC` = 各盆当前 ADC 读数
+- `CAL_HUM` = 仪器实测的盆土湿度%
+- 映射：每路线性，锚点 = 当前实测点 `(CAL_ADC[idx], CAL_HUM[idx])` + 泡水 `(CAL_WET_ADC→100%)`
+- 浇水 → ADC↓ → 湿度↑；变干 → 湿度↓，下限 clamp 到 `AIR_HUMIDITY_PCT`（35%）
 
-2026-08-12 实测（5 路同型号暂共用）：`CAL_DRY=3248`（晾干稳定）、`CAL_WET=1034`（泡水稳定），动态范围 2214。
+2026-08-12 逐路实测（用户仪器）：盆1(S1)=1269/59、盆2(S2)=1192/69、盆3(S3)=1251/68、盆4(S4)=1150/61、盆5(S5)=1467/73。泡水基准 `CAL_WET_ADC=1034`（S1 泡水实测，近似通用）。
 
-校准的"干燥基准"必须是**完全干燥**（擦干纸巾仍算湿，会残留水膜）；泡水基准需探头完全浸透、读数稳定后再取。
+换盆/换土后需重测：用仪器测当前湿度 + 记录对应 ADC，更新 `CAL_ADC` / `CAL_HUM` 对应项。
 
 ## NAS 端
 
