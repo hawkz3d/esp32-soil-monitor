@@ -26,3 +26,12 @@ BATT_ALARM = 20.0         # 电量低于此值报警（%）
 OFFLINE_ALARM = True      # payload offline=1 立即报警
 POWER_OFF_ALARM = True    # power=2（断电）报警
 HEARTBEAT_TIMEOUT_S = 60  # 心跳超过多久判网关离线（秒）
+
+# ---- 云端 MQTT（cloud_bridge.py 推送云端框架，占位符）----
+CLOUD_MQTT_HOST = os.environ.get("SMART_AGRI_CLOUD_HOST", "your_cloud_broker")
+CLOUD_MQTT_PORT = int(os.environ.get("SMART_AGRI_CLOUD_PORT", "1883"))
+CLOUD_MQTT_USER = "your_cloud_user"
+CLOUD_MQTT_PASS = "your_cloud_password"
+CLOUD_MQTT_TLS = False            # 云 broker 通常走 TLS（如 EMQX 8883 / 阿里云 MQTT），连上后改 True
+CLOUD_SUB_TOPIC = "agri/#"        # 本地订阅并转发到云端的 topic
+CLOUD_TOPIC_PREFIX = ""           # 转发到云端时的 topic 前缀（可带租户/站点标识，如 "site1/"），留空则原样转发
