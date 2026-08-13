@@ -86,7 +86,7 @@ MQTT topic：`agri/pot/{uid}/state`（数据）、`agri/status`（网关心跳�
 | 从站断电 | `power=2` |
 | 网关心跳超时 | >60s |
 
-## 快速开始（无硬件全链路）
+## 快速开始
 
 ```bash
 # 1. 启动虚拟 Modbus 从站（模拟 N 个花盆：传感器 + 供电）
