@@ -72,9 +72,36 @@ ESP32 作为 Modbus 主站，轮询任意从站设备读保持寄存器，经 MQ
 
 - `mqtt_sub.py`：订阅 `agri/#` 写入 SQLite，并做报警判断
 - `app.py`：Streamlit 面板（每盆仪表卡 + 趋势曲线），10s 自动刷新
+- `cloud_bridge.py`：本地 → 云端 MQTT 桥接（推送云端框架）
 - `config.py`：配置（占位符，本地运行前替换）
 
 MQTT topic：`agri/pot/{uid}/state`（数据）、`agri/status`（网关心跳）。
+
+## 云端推送（cloud_bridge）
+
+数据默认在局域网内流动。要"推送云端"，在本地 broker 与云端 broker 之间跑 `pc/cloud_bridge.py`：
+
+```
+ESP32/软件网关 ──MQTT──> 本地 broker (NAS)
+                            │  cloud_bridge.py 转发 agri/#
+                            ▼
+                     云端 broker（EMQX Serverless / 阿里云 / 自建）
+                            │
+                            ▼
+              pc/mqtt_sub.py --host <云broker> → SQLite → Streamlit（异地）
+```
+
+- 固件 / 网关照常只连本地 broker，桥接层负责上云，采集端无需改动
+- 云端断连期间消息暂存内存队列，恢复后按序补发
+- 配置在 `pc/config.py` 的 `CLOUD_*`（占位符）；云 broker 一般要求 TLS：
+
+```bash
+python pc/cloud_bridge.py --local-host <broker_ip> \
+    --cloud-host your.cloud.emqx.io --cloud-port 8883 \
+    --cloud-user user --cloud-pass pass --tls
+```
+
+- 云端侧直接复用 `pc/mqtt_sub.py --host <云broker>` 即可入库与展示
 
 ### 报警规则
 
