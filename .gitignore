@@ -12,6 +12,8 @@ build-*/
 # Python
 __pycache__/
 *.pyc
+pc/smart_agri.db
+pc/local_config.py
 
 # Credentials / secrets
 *.pem
