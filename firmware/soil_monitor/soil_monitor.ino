@@ -26,7 +26,7 @@ const int CAL_HUM[5] = {59, 69, 68, 95, 73};
 const float CAL_WET_ADC = 1034.0f;   // 泡水基准（S1 泡水实测，近似通用），泡水映射到 100%
 const float AIR_HUMIDITY_PCT = 35.0f; // 干燥下限=房间空气湿度
 
-const unsigned long REPORT_MS = 30000; // 上报间隔（毫秒）
+const unsigned long REPORT_MS = 600000; // 上报间隔（毫秒）
 
 WiFiClient espClient;
 PubSubClient mqtt(espClient);
